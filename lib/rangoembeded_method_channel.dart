@@ -23,12 +23,24 @@ class MethodChannelRangoembeded extends RangoembededPlatform {
 
   @override
   Future<String?> payment(Payment data) async {
+    var operation = 0;
+    switch (data.type) {
+      case PaymentType.debito:
+        operation = 2;
+        break;
+      case PaymentType.voucher:
+        operation = 4;
+        break;
+      default:
+        operation = 1;
+        break;
+    }
     // final post = await methodChannel.invokeMethod('getLastTransaction');
     final response = await methodChannel.invokeMethod<String>(
         'payment', <String, dynamic>{
       "id": data.id,
       "amount": data.amount,
-      "type": data.type.index
+      "type": operation
     });
     return response;
   }
@@ -47,7 +59,24 @@ class MethodChannelRangoembeded extends RangoembededPlatform {
 
   @override
   Future<String?> cancel(Payment data) async {
-    final response = await methodChannel.invokeMethod<String?>("cancel");
+    var operation = 0;
+    switch (data.type) {
+      case PaymentType.debito:
+        operation = 2;
+        break;
+      case PaymentType.voucher:
+        operation = 4;
+        break;
+      default:
+        operation = 1;
+        break;
+    }
+    final response = await methodChannel.invokeMethod<String?>(
+        "cancel", <String, dynamic>{
+      "id": data.id,
+      "amount": data.amount,
+      "type": operation
+    });
     return response;
   }
 }

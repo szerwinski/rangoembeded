@@ -38,7 +38,7 @@ class RangoembededPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private fun responseHandler(out: ParamOut, result: Result) {
         when (out.response) {
             0 -> {
-                result.success("APROVADA: ${out.resAuthorization}")
+                result.success("APROVADA: ${out.resPrint}")
             }
 
             1 -> {
@@ -72,7 +72,7 @@ class RangoembededPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "payment" -> {
                 println(call.arguments)
                 val req = ParamIn()
-                req.setTrsProduct(1)
+                req.setTrsProduct(call.argument("type")!!)
                 req.trsInstallments = 1
                 req.trsId = call.argument("id")
                 req.isTrsReceipt = false
@@ -109,7 +109,7 @@ class RangoembededPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
             "cancel" -> {
                 val req = ParamIn()
-                req.setTrsProduct(2)
+                req.setTrsProduct(call.argument("type")!!)
                 req.trsInstallments = 1
                 req.trsId = call.argument("id")
                 req.isTrsReceipt = true

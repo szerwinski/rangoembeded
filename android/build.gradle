@@ -123,6 +123,7 @@ task useAar {
     }
 }
 
+
 public static String createMetadataStr(String groupId, String artifactId, String version) {
     return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<metadata>\n" +
