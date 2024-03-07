@@ -114,6 +114,7 @@ class RangoembededPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 req.trsId = call.argument("id")
                 req.isTrsReceipt = true
                 req.merchantPwd = false
+                req.setTrsType(2)
                 req.trsAmount = call.argument("amount")
                 post7.processTransaction(req) { paramOut ->
                     responseHandler(paramOut, result)
