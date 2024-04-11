@@ -2,11 +2,12 @@ package br.com.rangosemfila.rangoembeded
 
 import android.app.Activity
 import android.content.Context
-import ger7.com.br.pos7api.LastTransaction
+
+
 import ger7.com.br.pos7api.POS7API
 import ger7.com.br.pos7api.ParamIn
 import ger7.com.br.pos7api.ParamOut
-import ger7.com.br.pos7api.TransactionReport
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -68,65 +69,47 @@ class RangoembededPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "getPlatformVersion" -> {
                 result.success("Android ${android.os.Build.VERSION.RELEASE}")
             }
-
             "payment" -> {
                 println(call.arguments)
-                val req = ParamIn()
-                req.setTrsProduct(call.argument("type")!!)
-                req.trsInstallments = 1
-                req.trsId = call.argument("id")
-                req.isTrsReceipt = false
-                req.trsAmount = call.argument("amount")
+                val req = ParamIn() 
+                req.setTrsProduct(call.argument("type")!!) //tipo da transação 1. credito, 2. debito, 4. voucher, 8. pix
+                req.trsInstallments = 0 //numero de parcelas
+                req.trsInstMode = 0 //modo de parcelamento
+                req.trsId = call.argument("id") //id da transação
+                req.isTrsReceipt = true //imprime o comprovante
+                req.trsAmount = call.argument("amount") //valor em inteiro
+                req.setTrsType(1) //1 pagamento, 2 cancelmaneto
                 post7.processTransaction(req) { paramOut ->
                     responseHandler(paramOut, result)
                 }
             }
-
-            "last" -> {
-                val lr: LastTransaction = post7.lastTransaction
-                result.success(lr)
-            }
-
-            "undoing" -> {
-                //desfazimento
-                val lr: LastTransaction = post7.lastTransaction
-                if (lr.trsStatus == LastTransaction.TransactionStatus.NOT_FOUND) {
-                    result.error("UNDOING", "Não há transações a serem desfeitas", null)
-                } else {
-                    if (lr.trsStatus == LastTransaction.TransactionStatus.APPROVED || lr.trsStatus == LastTransaction.TransactionStatus.NO_ANSWER) {
-                        val req = ParamIn()
-                        req.setTrsProduct(20)
-                        req.trsInstallments = 1
-                        req.trsId = call.argument("id")
-                        req.isTrsReceipt = false
-                        req.trsAmount = call.argument("amount")
-                        post7.processTransaction(req) { paramOut ->
-                            responseHandler(paramOut, result)
-                        }
-                    }
-                }
-            }
-
             "cancel" -> {
                 val req = ParamIn()
-                req.setTrsProduct(call.argument("type")!!)
-                req.trsInstallments = 1
-                req.trsId = call.argument("id")
-                req.isTrsReceipt = true
-                req.merchantPwd = false
-                req.setTrsType(2)
-                req.trsAmount = call.argument("amount")
+                req.setTrsProduct(call.argument("type")!!) //tipo da transação 1. credito, 2. debito, 4. voucher
+                req.trsInstallments = 0 //numero de parcelas
+                req.trsInstMode = 0 //modo de parcelamento
+                req.trsId = call.argument("id") //id da transação
+                req.isTrsReceipt = true //imprime o comprovante
+                req.merchantPwd = false //senha do lojista para cancelamento
+                req.setTrsType(2) // 1 pagamento, 2 cancelmaneto
+                req.trsAmount = call.argument("amount") //valor em inteiro
                 post7.processTransaction(req) { paramOut ->
                     responseHandler(paramOut, result)
                 }
             }
 
-            "transacoes" -> {
-                val logTrs = TransactionReport().report
-                if (logTrs == null) {
-                    result.error("TRSLOG: null", "TRSLOG null", "TRSLOG null")
-                } else {
-                    result.success(logTrs)
+            "cancel_pix" -> {
+                val req = ParamIn()
+                req.setTrsProduct(8) //tipo da transação 1. credito, 2. debito, 4. voucher
+                req.trsInstallments = 0 //numero de parcelas
+                req.trsInstMode = 0 //modo de parcelamento
+                req.trsId = call.argument("id") //id da transação
+                req.isTrsReceipt = true //imprime o comprovante
+                req.merchantPwd = false //senha do lojista para cancelamento
+                req.setTrsType(21) // 21 cancelamento pix
+                req.trsAmount = call.argument("amount") //valor em inteiro
+                post7.processTransaction(req) { paramOut ->
+                    responseHandler(paramOut, result)
                 }
             }
 

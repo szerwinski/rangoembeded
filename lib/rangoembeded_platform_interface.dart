@@ -1,5 +1,4 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:rangoembeded/dto/last_transaction.dart';
 import 'package:rangoembeded/dto/payment.dart';
 
 import 'rangoembeded_method_channel.dart';
@@ -33,15 +32,11 @@ abstract class RangoembededPlatform extends PlatformInterface {
     throw UnimplementedError('payment() has not been implemented.');
   }
 
-  Future<LastTransactions?> lastTransaction() async {
-    throw UnimplementedError('lastTransaction()  has not been implemented.');
-  }
-
-  Future<String?> undoing(Payment data) {
-    throw UnimplementedError('undoing  has not been implemented.');
-  }
-
     Future<String?> cancel(Payment data) {
-    throw UnimplementedError('undoing  has not been implemented.');
+    throw UnimplementedError('cancel has not been implemented.');
+  }
+
+  Future<String?> cancelPix(Payment data) {
+    throw UnimplementedError('cancel_pix has not been implemented.');
   }
 }

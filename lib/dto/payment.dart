@@ -1,7 +1,8 @@
 enum PaymentType {
   credito,
   debito,
-  voucher
+  voucher,
+  pix
 }
 
 class Payment {

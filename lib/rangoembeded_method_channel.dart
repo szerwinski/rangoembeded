@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:rangoembeded/dto/last_transaction.dart';
 import 'package:rangoembeded/dto/payment.dart';
 
 import 'rangoembeded_platform_interface.dart';
@@ -25,11 +24,17 @@ class MethodChannelRangoembeded extends RangoembededPlatform {
   Future<String?> payment(Payment data) async {
     var operation = 0;
     switch (data.type) {
+      case PaymentType.credito:
+        operation = 1;
+        break;
       case PaymentType.debito:
         operation = 2;
         break;
       case PaymentType.voucher:
         operation = 4;
+        break;
+      case PaymentType.pix:
+        operation = 8;
         break;
       default:
         operation = 1;
@@ -46,26 +51,20 @@ class MethodChannelRangoembeded extends RangoembededPlatform {
   }
 
   @override
-  Future<LastTransactions?> lastTransaction() async {
-    final response = await methodChannel.invokeMethod<LastTransactions>("last");
-    return response;
-  }
-
-  @override
-  Future<String?> undoing(Payment data) async {
-    final response = await methodChannel.invokeMethod<String?>("undoing");
-    return response;
-  }
-
-  @override
   Future<String?> cancel(Payment data) async {
     var operation = 0;
     switch (data.type) {
+      case PaymentType.credito:
+        operation = 1;
+        break;
       case PaymentType.debito:
         operation = 2;
         break;
       case PaymentType.voucher:
         operation = 4;
+        break;
+      case PaymentType.pix:
+        operation = 8;
         break;
       default:
         operation = 1;
@@ -76,6 +75,16 @@ class MethodChannelRangoembeded extends RangoembededPlatform {
       "id": data.id,
       "amount": data.amount,
       "type": operation
+    });
+    return response;
+  }
+
+  @override
+   Future<String?> cancelPix(Payment data) async {
+    final response = await methodChannel.invokeMethod<String?>(
+        "cancel_pix", <String, dynamic>{
+      "id": data.id,
+      "amount": data.amount
     });
     return response;
   }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -31,7 +33,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     String platformVersion;
     String post7;
-    var payment = Payment(id: "123456", type: PaymentType.credito, amount: "12000");
+    Random random = Random();
+    var payment = Payment(id: random.nextInt(9999).toString(), type: PaymentType.pix, amount: "12000");
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
@@ -39,8 +42,8 @@ class _MyAppState extends State<MyApp> {
        post7 = await _rangoembededPlugin.payment(payment) ?? "faiou";  
     } on PlatformException catch (err)  {
        platformVersion = 'Failed to get platform version.';
-       print(err.message);
-       print(err.details);
+       debugPrint(err.message);
+       debugPrint(err.details);
        post7 =  err.code;
     }
 
